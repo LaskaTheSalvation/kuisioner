@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MalariaCheck</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family:'Helvetica Neue',Arial,sans-serif;
+      background:#f0f4f8;
+      color:#2c3e50;
+      overflow:hidden; /* disable scrolling */ font-family:'Helvetica Neue',Arial,sans-serif; background:#f0f4f8; color:#2c3e50; }
+    /* Navbar */
+    nav { position:sticky; top:0; background: linear-gradient(90deg, #1abc9c, #16a085); padding:1rem 2rem; box-shadow:0 2px 4px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center; z-index:100; }
+    nav .brand { font-size:1.8rem; color:#fff; font-weight:bold; cursor:pointer; }
+    nav .menu { display:flex; gap:1rem; }
+    nav .menu a { color:#ecf0f1; text-decoration:none; font-weight:500; transition:opacity 0.2s; }
+    nav .menu a:hover { opacity:0.8; }
+
+    /* Hero Section fullscreen */
+    .hero {
+      background: linear-gradient(rgba(22, 160, 133, 0.85), rgba(22, 160, 133, 0.85)), url('https://cdn.pixabay.com/photo/2016/11/29/05/08/malaria-1867442_1280.jpg') center/cover no-repeat;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 1rem;
+    }
+    .hero-content { color:#fff; max-width:800px; animation:fadeIn 1.2s ease; }
+    .hero h1 { font-size:3rem; margin-bottom:1rem; }
+    .hero p { font-size:1.2rem; margin-bottom:2rem; line-height:1.5; }
+    .btn { display:inline-block; padding:0.75rem 2rem; background:#1abc9c; color:#fff; border-radius:30px; text-decoration:none; font-weight:600; box-shadow:0 4px 12px rgba(0,0,0,0.2); transition:transform 0.2s, background 0.2s; }
+    .btn:hover { background:#149174; transform:scale(1.05); }
+
+    @keyframes fadeIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav { flex-direction:column; align-items:flex-start; padding:1rem; }
+      nav .menu { flex-direction:column; width:100%; margin-top:0.5rem; }
+      nav .menu a { padding:0.5rem 0; }
+      .hero { height:auto; padding:4rem 1rem; }
+      .hero h1 { font-size:2rem; }
+      .hero p { font-size:1rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="brand">MalariaCheck</div>
+  </nav>
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Selamat Datang di MalariaCheck</h1>
+      <p>Periksa gejala malaria anda melalui kuisioner kami, Mari lindungi diri dan keluarga dari risiko malaria.</p>
+      <a href="quiz.html" class="btn">Mulai Kuisioner</a>
+    </div>
+  </section>
+</body>
+</html>

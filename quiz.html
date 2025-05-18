@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuisioner Skrining Malaria</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Helvetica Neue',Arial,sans-serif; background:#eef2f7; color:#2c3e50; }
+    nav { background:linear-gradient(90deg,#1abc9c,#16a085); padding:1rem 2rem; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+    nav .brand { font-size:1.8rem; color:#fff; }
+    main { max-width:700px; margin:2rem auto; padding:1rem; }
+    .step { display: none; background:#fff; border-radius:8px; padding:1.5rem; margin-bottom:1.5rem; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
+    .step.active { display: block; }
+    .step h2 { margin-bottom:1rem; font-size:1.6rem; color:#16a085; }
+    label { display:block; margin:0.8rem 0 0.4rem; font-weight:600; }
+    input[type=text], input[type=number], select { width:100%; padding:0.6rem; border:1px solid #bdc3c7; border-radius:4px; }
+    .question { margin-top:1rem; }
+    .options { display:flex; gap:1.5rem; margin-top:0.5rem; }
+    .buttons { display:flex; justify-content:space-between; margin-top:1.5rem; }
+    .buttons button { padding:0.6rem 1.5rem; background:#1abc9c; color:#fff; border:none; border-radius:4px; font-size:1rem; cursor:pointer; transition:background 0.2s; }
+    .buttons button:disabled { background:#bdc3c7; cursor:not-allowed; }
+    .buttons button:hover:not(:disabled) { background:#149174; }
+    #resultBox { display:none; padding:1rem; border-radius:6px; font-weight:600; margin-top:1rem; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,0.1);}    
+    .result-header { font-size:1.4rem; color:#16a085; margin-bottom:0.5rem; }
+    .result-content { margin:0.5rem 0; }
+    .danger { color:#c0392b; }
+    .warning { color:#f39c12; }
+    .success { color:#27ae60; }
+    .download-btn { display:inline-block; margin-top:1rem; padding:0.6rem 1.2rem; background:#2980b9; color:#fff; border-radius:4px; text-decoration:none; }
+    .progress-bar { display:flex; margin-bottom:1rem; }
+    .progress-bar div { flex:1; height:8px; background:#bdc3c7; margin-right:4px; border-radius:4px; }
+    .progress-bar div.active { background:#1abc9c; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+  <nav>
+    <div class="brand">MalariaCheck</div>
+  </nav>
+  <main>
+    <div class="progress-bar" id="progressBar"></div>
+    <form id="wizardForm">
+      <!-- Step 1: Data Diri -->
+      <div class="step active" data-step="1">
+        <h2>Data Diri</h2>
+        <label for="nama">Nama</label>
+        <input type="text" id="nama" name="nama" required>
+
+        <label for="umur">Umur</label>
+        <input type="number" id="umur" name="umur" required min="1" max="90">
+
+        <label for="jk">Jenis Kelamin</label>
+        <select id="jk" name="jk" required>
+          <option value="">-- Pilih --</option>
+          <option value="Laki-laki">Laki-laki</option>
+          <option value="Perempuan">Perempuan</option>
+        </select>
+        <div class="buttons">
+          <div></div>
+          <button type="button" id="nextToQ">Lanjut</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Questionnaire -->
+      <div class="step" data-step="2">
+        <h2>Kuisioner Skrining Malaria</h2>
+        <div id="questionContainer"></div>
+        <div class="buttons">
+          <button type="button" id="prevQ">Kembali</button>
+          <button type="button" id="nextQ">Lanjut</button>
+        </div>
+      </div>
+    </form>
+    <div id="resultBox"></div>
+    <canvas id="resultCanvas" style="display:none;"></canvas>
+  </main>
+
+  <script>
+    const questions = [
+      {id:1, text:'Apakah Anda mengalami demam dalam 48 jam terakhir?'},
+      {id:2, text:'Apakah Anda merasakan menggigil atau kedinginan?'},
+      {id:3, text:'Apakah Anda merasa sakit kepala hebat?'},
+      {id:4, text:'Apakah Anda mengalami mual atau muntah?'},
+      {id:5, text:'Apakah Anda mengalami keringat berlebih setelah demam?'},
+      {id:6, text:'Apakah Anda pernah bepergian ke daerah endemis malaria dalam 1 bulan terakhir?', extraInput:'Jika Ya, sebutkan lokasi:'},
+      {id:7, text:'Apakah Anda pernah digigit nyamuk saat berada di luar rumah malam hari?'},
+      {id:8, text:'Apakah Anda tidur dengan kelambu atau menggunakan obat anti nyamuk?'}
+    ];
+
+    let currentStep = 1;
+    const totalSteps = 2;
+    const answers = {};
+    let qIndex = 0;
+
+    const form = document.getElementById('wizardForm');
+    const steps = document.querySelectorAll('.step');
+    const progressBar = document.getElementById('progressBar');
+
+    for(let i=1;i<=totalSteps;i++){
+      const div = document.createElement('div');
+      if(i===1) div.classList.add('active');
+      progressBar.appendChild(div);
+    }
+
+    document.getElementById('nextToQ').addEventListener('click', () => {
+      const namaInput = document.getElementById('nama');
+      const umurInput = document.getElementById('umur');
+      const jkInput = document.getElementById('jk');
+
+      if (!namaInput.value.trim()) {
+        alert('Nama wajib diisi');
+        namaInput.focus();
+        return;
+      }
+
+      const umur = parseInt(umurInput.value);
+      if (!umur || umur < 1 || umur > 90) {
+        alert('Umur harus antara 1 dan 90');
+        umurInput.focus();
+        return;
+      }
+
+      if (!jkInput.value) {
+        alert('Silakan pilih jenis kelamin');
+        jkInput.focus();
+        return;
+      }
+
+      goToStep(2);
+      renderQuestion();
+    });
+
+    document.getElementById('prevQ').addEventListener('click', ()=> changeQuestion(-1));
+    document.getElementById('nextQ').addEventListener('click', ()=> changeQuestion(1));
+
+    function goToStep(step){
+      currentStep = step;
+      steps.forEach(s=> s.classList.toggle('active', +s.dataset.step===step));
+      Array.from(progressBar.children).forEach((bar,i)=> bar.classList.toggle('active', i<step));
+    }
+
+    function renderQuestion(){
+      if (qIndex < 0) qIndex = 0;
+      if (qIndex >= questions.length) qIndex = questions.length - 1;
+
+      const container = document.getElementById('questionContainer');
+      const q = questions[qIndex];
+      let html = `<div class="question">
+          <label>${q.id}. ${q.text}</label>
+          <div class="options">
+            <label><input type="radio" name="q${q.id}" value="Ya"> Ya</label>
+            <label><input type="radio" name="q${q.id}" value="Tidak"> Tidak</label>
+          </div>`;
+      if(q.extraInput) html += `<div id="extra${q.id}" style="display:none; margin-top:0.5rem;">
+            <label>${q.extraInput}</label>
+            <input type="text" name="lokasi${q.id}" id="lokasi${q.id}">
+          </div>`;
+      html += `</div>`;
+      container.innerHTML = html;
+
+      if(q.extraInput){
+        const radios = container.querySelectorAll(`input[name="q${q.id}"]`);
+        const extraDiv = document.getElementById(`extra${q.id}`);
+        const extraInput = document.getElementById(`lokasi${q.id}`);
+        radios.forEach(r => r.addEventListener('change', e => {
+          if(e.target.value==='Ya'){
+            extraDiv.style.display='block'; extraInput.required=true;
+          } else {
+            extraDiv.style.display='none'; extraInput.required=false; extraInput.value='';
+          }
+        }));
+      }
+
+      document.getElementById('prevQ').disabled = qIndex === 0;
+      document.getElementById('nextQ').textContent = qIndex === questions.length - 1 ? 'Submit' : 'Next';
+    }
+
+    function changeQuestion(dir){
+      if (qIndex < 0 || qIndex >= questions.length) return;
+      const q = questions[qIndex];
+      if(dir===1){
+        const sel = form.querySelector(`input[name="q${q.id}"]:checked`);
+        if(!sel){ return alert('Pilih jawaban dulu!'); }
+        answers[`q${q.id}`] = sel.value;
+        if(q.extraInput && sel.value==='Ya'){
+          const extraVal = form.querySelector(`#lokasi${q.id}`).value.trim();
+          if (!extraVal) {
+            alert('Mohon isi lokasi perjalanan.');
+            return;
+          }
+          answers[`lokasi${q.id}`] = extraVal;
+        }
+      }
+      if(dir===1 && qIndex===questions.length-1){ displayResult(); return; }
+
+      qIndex += dir;
+      renderQuestion();
+    }
+
+    function displayResult(){
+      const box = document.getElementById('resultBox');
+      const count = Object.values(answers).filter(v=>v==='Ya').length;
+      let verdict, cls;
+      if(count>=6){ verdict='Kemungkinan besar Anda terjangkit malaria.'; cls='danger'; }
+      else if(count>=3){ verdict='Ada indikasi gejala malaria.'; cls='warning'; }
+      else { verdict='Anda tidak menunjukkan tanda-tanda terjangkit malaria.'; cls='success'; }
+
+      const name = form.nama.value;
+      const age = form.umur.value;
+      const gender = form.jk.value;
+      const timestamp = new Date().toLocaleString();
+      const data = {
+        Nama: name, Umur: age, JenisKelamin: gender,
+        JawabanYa: count, Verdict: verdict, Waktu: timestamp
+      };
+
+      let html = `<div class="result-header">Hasil Skrining Malaria</div>
+                 <div class="result-content"><strong>Nama:</strong> ${name}</div>
+                 <div class="result-content"><strong>Umur:</strong> ${age}</div>
+                 <div class="result-content"><strong>Jenis Kelamin:</strong> ${gender}</div>
+                 <div class="result-content ${cls}"><strong>Kesimpulan:</strong> ${verdict}</div>
+                 <a href="#" id="downloadBtn" class="download-btn">Download Hasil</a>`;
+      box.innerHTML = html;
+      box.style.display = 'block';
+      form.remove();
+
+      document.getElementById('downloadBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        html2canvas(document.getElementById('resultBox')).then(canvas => {
+          const link = document.createElement('a');
+          link.download = `hasil_skrining_malaria_${Date.now()}.png`;
+          link.href = canvas.toDataURL();
+          link.click();
+        });
+      });
+    }
+  </script>
+</body>
+</html>
