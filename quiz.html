@@ -1,34 +1,41 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Kuisioner Skrining Malaria</title>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'Helvetica Neue',Arial,sans-serif; background:#eef2f7; color:#2c3e50; }
     nav { background:linear-gradient(90deg,#1abc9c,#16a085); padding:1rem 2rem; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
     nav .brand { font-size:1.8rem; color:#fff; }
     main { max-width:700px; margin:2rem auto; padding:1rem; }
-
-    /* Wizard */
     .step { display: none; background:#fff; border-radius:8px; padding:1.5rem; margin-bottom:1.5rem; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
     .step.active { display: block; }
     .step h2 { margin-bottom:1rem; font-size:1.6rem; color:#16a085; }
     label { display:block; margin:0.8rem 0 0.4rem; font-weight:600; }
-    input[type=text], input[type=number], select { width:100%; padding:0.6rem; border:1px solid #bdc3c7; border-radius:4px; }
+    input[type=text], input[type=number], input[type=date], select {
+      width:100%; padding:0.6rem; border:1px solid #bdc3c7; border-radius:4px;
+    }
     .question { margin-top:1rem; }
     .options { display:flex; gap:1.5rem; margin-top:0.5rem; }
     .buttons { display:flex; justify-content:space-between; margin-top:1.5rem; }
-    .buttons button { padding:0.6rem 1.5rem; background:#1abc9c; color:#fff; border:none; border-radius:4px; font-size:1rem; cursor:pointer; transition:background 0.2s; }
+    .buttons button {
+      padding:0.6rem 1.5rem; background:#1abc9c; color:#fff;
+      border:none; border-radius:4px; font-size:1rem; cursor:pointer; transition:background 0.2s;
+    }
     .buttons button:disabled { background:#bdc3c7; cursor:not-allowed; }
     .buttons button:hover:not(:disabled) { background:#149174; }
     .progress-bar { display:flex; margin-bottom:1rem; }
-    .progress-bar div { flex:1; height:8px; background:#bdc3c7; margin-right:4px; border-radius:4px; }
+    .progress-bar div {
+      flex:1; height:8px; background:#bdc3c7; margin-right:4px; border-radius:4px;
+    }
     .progress-bar div.active { background:#1abc9c; }
-
-    /* Hasil skrining */
-    #resultBox { display:none; padding:1.5rem; border-radius:16px; background:#f9f9f9; box-shadow:0 1px 4px rgba(0,0,0,0.1); }
+    #resultBox {
+      display:none; padding:1.5rem; border-radius:16px;
+      background:#f9f9f9; box-shadow:0 1px 4px rgba(0,0,0,0.1);
+    }
     .result-header h2 { font-size:1.6rem; color:#2c3e50; margin-bottom:0.5rem; }
     .result-header p { margin-bottom:1rem; color:#555; }
     .result-card { border-radius:12px; padding:1rem; margin-top:1rem; background-color:#ecf0f1; }
@@ -37,20 +44,13 @@
     .result-card.danger  { border-left:6px solid #c0392b; }
     .result-card h3 { margin-bottom:0.5rem; }
     .result-card p { line-height:1.4; }
-
-    /* Data diri di dalam hasil */
     .user-info {
-      background: #fff;
-      border-radius: 8px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      background: #fff; border-radius: 8px; padding: 1rem;
+      margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
     .user-info div { margin-bottom: 0.5rem; }
-    .user-info strong { display: inline-block; width: 120px; }
-
+    .user-info strong { display: inline-block; width: 140px; }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
   <nav>
@@ -64,20 +64,28 @@
         <h2>Data Diri</h2>
         <label for="nama">Nama</label>
         <input type="text" id="nama" name="nama" required>
-        <label for="umur">Umur</label>
-        <input type="number" id="umur" name="umur" required min="1" max="90">
+        <label for="nik">NIK</label>
+        <input type="text" id="nik" name="nik" required>
+        <label for="tgl_lahir">Tanggal Lahir</label>
+        <input type="date" id="tgl_lahir" name="tgl_lahir" required>
+        <label for="umur">Usia</label>
+        <input type="number" id="umur" name="umur" required min="1" max="120">
         <label for="jk">Jenis Kelamin</label>
         <select id="jk" name="jk" required>
           <option value="">-- Pilih --</option>
           <option value="Laki-laki">Laki-laki</option>
-          <option value="Perempuan">Perempuan</option>
+          <option value="Perempuan - Tidak Hamil">Perempuan - Tidak Hamil</option>
+          <option value="Perempuan - Hamil">Perempuan - Hamil</option>
         </select>
+        <label for="pekerjaan">Pekerjaan</label>
+        <input type="text" id="pekerjaan" name="pekerjaan" required>
         <div class="buttons">
           <div></div>
           <button type="button" id="nextToQ">Lanjut</button>
         </div>
       </div>
-      <!-- Step 2: Questionnaire -->
+
+      <!-- Step 2: Kuisioner -->
       <div class="step" data-step="2">
         <h2>Kuisioner Skrining Malaria</h2>
         <div id="questionContainer"></div>
@@ -88,20 +96,21 @@
       </div>
     </form>
 
-    <!-- Hasil Skrining -->
+    <!-- Hasil -->
     <div id="resultBox"></div>
   </main>
 
   <script>
     const questions = [
-      {id:1, text:'Apakah Anda mengalami demam dalam 48 jam terakhir?'},
-      {id:2, text:'Apakah Anda merasakan menggigil atau kedinginan?'},
-      {id:3, text:'Apakah Anda merasa sakit kepala hebat?'},
-      {id:4, text:'Apakah Anda mengalami mual atau muntah?'},
-      {id:5, text:'Apakah Anda mengalami keringat berlebih setelah demam?'},
-      {id:6, text:'Apakah Anda pernah bepergian ke daerah endemis malaria dalam 1 bulan terakhir?', extraInput:'Jika Ya, sebutkan lokasi:'},
-      {id:7, text:'Apakah Anda pernah digigit nyamuk saat berada di luar rumah malam hari?'},
-      {id:8, text:'Apakah Anda tidur dengan kelambu atau menggunakan obat anti nyamuk?'}
+      {id:1, text:'Apakah Anda mengalami demam dalam 48 jam (2 hari) terakhir dan disertai keringat berlebihan?'},
+      {id:2, text:'Apakah Anda merasa menggigil disertai sakit kepala hebat?'},
+      {id:3, text:'Apakah Anda mengalami mual atau muntah?'},
+      {id:4, text:'Apakah Anda pernah bepergian ke daerah endemis malaria dalam 1 bulan terakhir?', extraInput:'Jika Ya, sebutkan lokasi:'},
+      {id:5, text:'Apakah ada kegiatan di luar rumah saat malam hari?'},
+      {id:6, text:'Apakah Anda pernah digigit nyamuk saat berada di luar rumah malam hari?'},
+      {id:7, text:'Apakah Anda tidur menggunakan kelambu atau menggunakan obat anti nyamuk?'},
+      {id:8, text:'Apakah Anda pernah menderita penyakit malaria sebelumnya?', extraInput:'Jika Ya, sebutkan tanggal/bulan/tahun:'},
+      {id:9, text:'Apakah Anda pernah mengonsumsi obat malaria?', extraInput:'Jika Ya, sebutkan jenis obat yang pernah Anda konsumsi:'}
     ];
 
     let currentStep=1, qIndex=0;
@@ -110,7 +119,6 @@
     const steps=document.querySelectorAll('.step');
     const progressBar=document.getElementById('progressBar');
 
-    // Inisialisasi progress bar
     for(let i=1;i<=totalSteps;i++){
       const d=document.createElement('div');
       if(i===1) d.classList.add('active');
@@ -118,14 +126,24 @@
     }
 
     document.getElementById('nextToQ').onclick = ()=>{
-      // validasi singkat
-      if(!form.nama.value.trim()){ alert('Nama wajib diisi'); return; }
-      const umur=parseInt(form.umur.value);
-      if(!umur||umur<1||umur>90){ alert('Umur harus antara 1 dan 90'); return; }
-      if(!form.jk.value){ alert('Silakan pilih jenis kelamin'); return; }
+      const nama = form.nama.value.trim();
+      const nik = form.nik.value.trim();
+      const tgl = form.tgl_lahir.value;
+      const umur = parseInt(form.umur.value);
+      const jk = form.jk.value;
+      const kerja = form.pekerjaan.value.trim();
+
+      if(!nama) return alert('Nama wajib diisi');
+      if(!nik || nik.length < 10) return alert('NIK tidak valid');
+      if(!tgl) return alert('Tanggal lahir wajib diisi');
+      if(!umur || umur < 1 || umur > 120) return alert('Usia tidak valid');
+      if(!jk) return alert('Pilih jenis kelamin');
+      if(!kerja) return alert('Pekerjaan wajib diisi');
+
       goToStep(2);
       renderQuestion();
     };
+
     document.getElementById('prevQ').onclick = ()=> changeQuestion(-1);
     document.getElementById('nextQ').onclick = ()=> changeQuestion(1);
 
@@ -174,7 +192,7 @@
         answers[`q${q.id}`]=sel.value;
         if(q.extraInput&&sel.value==='Ya'){
           const loc=document.getElementById(`lokasi${q.id}`).value.trim();
-          if(!loc){ alert('Mohon isi lokasi perjalanan.'); return; }
+          if(!loc){ alert('Mohon isi informasi tambahan.'); return; }
           answers[`lokasi${q.id}`]=loc;
         }
       }
@@ -187,50 +205,55 @@
       const box=document.getElementById('resultBox');
       const countYes=Object.values(answers).filter(v=>v==='Ya').length;
       let title,msg,cls;
-
       if(countYes>=6){
         title='⚠️ Waspada, Gejala Mengarah ke Malaria';
-        msg=`Berdasarkan jawaban yang kamu berikan, terdapat ${countYes} indikasi positif dari 8 pertanyaan. 
-             Ini menunjukkan kemungkinan besar adanya infeksi malaria. Mohon untuk segera menghubungi atau 
-             mendatangi fasilitas kesehatan terdekat agar mendapatkan pemeriksaan dan penanganan lebih lanjut.`;
+        msg=`Terdapat ${countYes} indikasi positif dari 9 pertanyaan. Segera periksa ke fasilitas kesehatan terdekat.`;
         cls='danger';
       } else if(countYes>=3){
         title='⚠️ Perhatian, Ada Indikasi Gejala Malaria';
-        msg=`Kamu menjawab "Ya" pada ${countYes} dari 8 pertanyaan. Ini mengindikasikan gejala awal malaria. 
-             Sebaiknya pantau kondisi tubuhmu dan pertimbangkan pemeriksaan kesehatan lebih lanjut jika gejala bertambah berat.`;
+        msg=`Kamu menjawab "Ya" pada ${countYes} dari 9 pertanyaan. Pantau kondisi dan pertimbangkan pemeriksaan.`;
         cls='warning';
       } else {
         title='🎉 Yay, Kamu Sehat!';
-        msg=`Kamu hanya menjawab "Ya" pada ${countYes} dari 8 pertanyaan. 
-             Sejauh ini, tidak ada tanda-tanda gejala malaria yang signifikan. 
-             Terus jaga kebersihan lingkungan, gunakan kelambu atau obat anti-nyamuk saat tidur, 
-             dan pastikan pola makan serta istirahatmu tetap teratur.`;
+        msg=`Kamu hanya menjawab "Ya" pada ${countYes} dari 9 pertanyaan. Terus jaga kesehatan dan kebersihan lingkungan.`;
         cls='success';
       }
 
-      // Ambil data diri
-      const name = form.nama.value;
-      const age  = form.umur.value;
-      const gender = form.jk.value;
-
-      // Bangun HTML hasil
       box.innerHTML = `
         <div class="result-header">
           <h2>Yuk Cek Hasilnya!</h2>
-          <p>Terima kasih, <strong>${name}</strong>! Berikut ringkasan hasil skrining malaria berdasarkan data dan jawabanmu.</p>
+          <p>Terima kasih, <strong>${form.nama.value}</strong>! Berikut hasil skrining:</p>
         </div>
-        <div class="result-card ${cls}">
+        <div class="result-card ${cls}" id="hasilCetak">
           <div class="user-info">
-            <div><strong>Nama:</strong> ${name}</div>
-            <div><strong>Umur:</strong> ${age} tahun</div>
-            <div><strong>Jenis Kelamin:</strong> ${gender}</div>
+            <div><strong>Nama:</strong> ${form.nama.value}</div>
+            <div><strong>NIK:</strong> ${form.nik.value}</div>
+            <div><strong>Tanggal Lahir:</strong> ${form.tgl_lahir.value}</div>
+            <div><strong>Usia:</strong> ${form.umur.value} tahun</div>
+            <div><strong>Jenis Kelamin:</strong> ${form.jk.value}</div>
+            <div><strong>Pekerjaan:</strong> ${form.pekerjaan.value}</div>
           </div>
           <h3>${title}</h3>
           <p>${msg}</p>
         </div>
+        <div style="margin-top: 1.5rem; text-align: center;">
+          <button onclick="downloadResultImage()" style="padding: 0.6rem 1.5rem; background: #3498db; color: #fff; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;">
+            Simpan Hasil sebagai Gambar 📸
+          </button>
+        </div>
       `;
       box.style.display = 'block';
       form.remove();
+    }
+
+    function downloadResultImage() {
+      const element = document.getElementById('hasilCetak');
+      html2canvas(element).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'hasil-skrining-malaria.png';
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
     }
   </script>
 </body>
