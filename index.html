@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MalariaCheck</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -10,17 +10,26 @@
       font-family:'Helvetica Neue',Arial,sans-serif;
       background:#f0f4f8;
       color:#2c3e50;
-      overflow:hidden; /* disable scrolling */ font-family:'Helvetica Neue',Arial,sans-serif; background:#f0f4f8; color:#2c3e50; }
-    /* Navbar */
-    nav { position:sticky; top:0; background: linear-gradient(90deg, #1abc9c, #16a085); padding:1rem 2rem; box-shadow:0 2px 4px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center; z-index:100; }
-    nav .brand { font-size:1.8rem; color:#fff; font-weight:bold; cursor:pointer; }
-    nav .menu { display:flex; gap:1rem; }
-    nav .menu a { color:#ecf0f1; text-decoration:none; font-weight:500; transition:opacity 0.2s; }
-    nav .menu a:hover { opacity:0.8; }
+    }
 
-    /* Hero Section fullscreen */
+    nav {
+      position:sticky; top:0;
+      background: linear-gradient(90deg, #1abc9c, #16a085);
+      padding:1rem 2rem;
+      box-shadow:0 2px 4px rgba(0,0,0,0.1);
+      display:flex; justify-content:space-between; align-items:center;
+      z-index:100;
+    }
+    nav .brand {
+      font-size:1.8rem;
+      color:#fff;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
     .hero {
-      background: linear-gradient(rgba(22, 160, 133, 0.85), rgba(22, 160, 133, 0.85)), url('https://cdn.pixabay.com/photo/2016/11/29/05/08/malaria-1867442_1280.jpg') center/cover no-repeat;
+      background: linear-gradient(rgba(22,160,133,0.85), rgba(22,160,133,0.85)),
+                  url('https://cdn.pixabay.com/photo/2016/11/29/05/08/malaria-1867442_1280.jpg') center/cover no-repeat;
       height: 100vh;
       display: flex;
       align-items: center;
@@ -28,22 +37,86 @@
       text-align: center;
       padding: 0 1rem;
     }
-    .hero-content { color:#fff; max-width:800px; animation:fadeIn 1.2s ease; }
-    .hero h1 { font-size:3rem; margin-bottom:1rem; }
-    .hero p { font-size:1.2rem; margin-bottom:2rem; line-height:1.5; }
-    .btn { display:inline-block; padding:0.75rem 2rem; background:#1abc9c; color:#fff; border-radius:30px; text-decoration:none; font-weight:600; box-shadow:0 4px 12px rgba(0,0,0,0.2); transition:transform 0.2s, background 0.2s; }
-    .btn:hover { background:#149174; transform:scale(1.05); }
+    .hero-content {
+      color:#fff;
+      max-width:800px;
+      animation:fadeIn 1.2s ease;
+    }
+    .hero h1 {
+      font-size:3rem;
+      margin-bottom:1rem;
+    }
+    .hero p {
+      font-size:1.2rem;
+      margin-bottom:2rem;
+      line-height:1.5;
+    }
+    .btn {
+      display:inline-block;
+      padding:0.75rem 2rem;
+      background:#1abc9c;
+      color:#fff;
+      border-radius:30px;
+      text-decoration:none;
+      font-weight:600;
+      box-shadow:0 4px 12px rgba(0,0,0,0.2);
+      transition:transform 0.2s, background 0.2s;
+    }
+    .btn:hover {
+      background:#149174;
+      transform:scale(1.05);
+    }
 
-    @keyframes fadeIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    .section {
+      padding:4rem 2rem;
+    }
+    .container {
+      max-width:1000px;
+      margin:auto;
+    }
 
-    /* Responsive */
+    .edukasi-container, .gejala-container, .akibat-container, .pencegahan-container {
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
+      gap:2rem;
+    }
+
+    .edukasi img, .gejala img, .akibat img, .pencegahan img {
+      max-width:400px;
+      width:100%;
+      border-radius:12px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    }
+    .edukasi-text, .gejala-text, .akibat-text, .pencegahan-text {
+      flex:1;
+      min-width:280px;
+    }
+
+    .edukasi-text h2, .gejala h2, .akibat h2, .pencegahan h2 {
+      font-size:2rem;
+      margin-bottom:1rem;
+      color:#c0392b;
+    }
+    .edukasi-text p, .gejala p, .akibat p, .pencegahan p {
+      font-size:1.1rem;
+      line-height:1.6;
+    }
+
+    ul { margin: 0; padding-left: 1.2rem; }
+
+    @keyframes fadeIn {
+      from { opacity:0; transform:translateY(20px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+
     @media (max-width: 768px) {
       nav { flex-direction:column; align-items:flex-start; padding:1rem; }
-      nav .menu { flex-direction:column; width:100%; margin-top:0.5rem; }
-      nav .menu a { padding:0.5rem 0; }
       .hero { height:auto; padding:4rem 1rem; }
       .hero h1 { font-size:2rem; }
       .hero p { font-size:1rem; }
+      .edukasi-container, .gejala-container, .akibat-container, .pencegahan-container { flex-direction:column; }
     }
   </style>
 </head>
@@ -51,12 +124,103 @@
   <nav>
     <div class="brand">MalariaCheck</div>
   </nav>
+  <section class="section edukasi">
+    <div class="container edukasi-container">
+      <img src="WhatsApp Image 2025-06-13 at 05.44.03.jpeg" alt="Berantas Malaria">
+      <div class="edukasi-text">
+        <h2>Berantas Malaria</h2>
+        <p>
+          Malaria adalah penyakit menular yang disebabkan oleh parasit <strong>Plasmodium</strong> dan ditularkan melalui gigitan nyamuk <strong>Anopheles</strong>.
+          <br><br>
+          Malaria dapat menyerang siapa saja — laki-laki atau perempuan, segala usia, dan semua jenis pekerjaan.
+          <br><br>
+          <strong>Kelambu dipasang, tidur tenang, malaria hilang.</strong>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section gejala">
+    <div class="container gejala-container">
+      <img src="WhatsApp Image 2025-06-13 at 05.44.29.jpeg" alt="Gejala Malaria">
+      <div class="gejala-text">
+        <h2>Gejala Malaria</h2>
+        <p><strong>Gejala Malaria Ringan:</strong></p>
+        <ul>
+          <li>Demam menggigil disertai sakit kepala</li>
+          <li>Badan terasa lemah</li>
+          <li>Mual atau muntah</li>
+        </ul>
+        <p style="margin-top:1rem;"><strong>Gejala Malaria Berat:</strong></p>
+        <ul>
+          <li>Kuning pada mata</li>
+          <li>Panas tinggi</li>
+          <li>Muntah terus menerus</li>
+          <li>Pingsan sampai koma</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section akibat">
+    <div class="container akibat-container">
+      <img src="WhatsApp Image 2025-06-13 at 05.44.48.jpeg" alt="Akibat Malaria">
+      <div class="akibat-text">
+        <h2>Akibat dari Penyakit Malaria</h2>
+        <ul>
+          <li>Daya tahan tubuh menurun / anemia</li>
+          <li>Pertumbuhan otak pada anak-anak terhambat</li>
+          <li>Pendarahan pada ibu hamil</li>
+          <li>Bayi lahir dalam keadaan meninggal</li>
+          <li>Bayi lahir dengan berat badan rendah</li>
+          <li>Ibu hamil dapat mengalami pendarahan berat atau meninggal</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section pencegahan">
+    <div class="container pencegahan-container">
+      <img src="WhatsApp Image 2025-06-13 at 05.45.05.jpeg" alt="Pencegahan Dalam Rumah">
+      <div class="pencegahan-text">
+        <h2>Cara Mencegah Malaria</h2>
+        <p><strong>Saat berada di dalam rumah:</strong></p>
+        <ul>
+          <li>Tidur menggunakan kelambu</li>
+          <li>Menggunakan obat anti nyamuk</li>
+          <li>Memasang kawat kasa pada ventilasi rumah</li>
+        </ul>
+        <p><strong>Jika berada di luar rumah malam hari:</strong></p>
+        <ul>
+          <li>Memakai pakaian lengan panjang</li>
+          <li>Menggunakan obat oles anti nyamuk</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section pencegahan">
+    <div class="container pencegahan-container">
+      <img src="WhatsApp Image 2025-06-13 at 05.45.21.jpeg" alt="Pencegahan Luar Rumah">
+      <div class="pencegahan-text">
+        <h2>Pencegahan di Luar Rumah</h2>
+        <ul>
+          <li>Membersihkan lingkungan sekitar</li>
+          <li>Membersihkan selokan</li>
+          <li>Menimbun genangan air</li>
+          <li>Menebar ikan pemakan jentik nyamuk</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <section class="hero">
     <div class="hero-content">
       <h1>Selamat Datang di MalariaCheck</h1>
-      <p>Periksa gejala malaria anda melalui kuisioner kami, Mari lindungi diri dan keluarga dari risiko malaria.</p>
+      <p>Periksa gejala malaria anda melalui kuisioner kami. Mari lindungi diri dan keluarga dari risiko malaria.</p>
       <a href="quiz.html" class="btn">Mulai Kuisioner</a>
     </div>
   </section>
+
 </body>
 </html>
